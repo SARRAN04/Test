@@ -1,0 +1,757 @@
+var clientData = [];
+var rowCount = 1;
+var createQuoteStatus = "";
+var clientData = [];
+var rowCount = 1;
+var createQuoteStatus = "";
+var abapCRObjectType = ["Report", "Interface", "Data Conversion", "Enhancement / User Exits", "Smart Form", "Workflow", "Webdynpro", "Dialogs / Infotypes"];
+var abapINCObjectType = ["L0", "L1", "L2", "L3"];
+var abapCRComplexity = ["Low", "Medium", "High"];
+var abapINCComplexity = ["P1", "P2", "P3", "P4"];
+
+
+
+function reqQuote() {
+    var myTable = document.getElementById("lineItems");
+    var requestJson = "{\"estimationRequest\":{\"quoteStatus\":\"Created\",\"totalEffort\": 0,\"createdBy\": \"Portal\",\"changedBy\": \"Portal\",\"approvedBy\": \"\",\"technology\": [{";
+    requestJson += "\"technologyName\": \"ABAP\",\"effort\": 0.0,\"abapDetails\": [";
+    if (myTable.rows.length > 1) {
+        for (i = 1; i < myTable.rows.length; i++) {
+            var objCells = myTable.rows.item(i).cells;
+            var k = document.getElementById("clientID").selectedIndex;
+
+            for (var j = 1; j < objCells.length; j++) {
+                switch (j) {
+                    case 1:
+                        if (i > 1) {
+                            requestJson += ",";
+                        }
+                        requestJson += "{\"clientID\":" + objCells.item(j).innerHTML;
+                        break;
+                    case 2:
+                        requestJson += ",\"requestType\":\"" + objCells.item(j).innerHTML + "\"";
+                        requestJson += ",\"releaseType\":\"" + clientData[k].itReleasesPerYear + "\"";
+                        break;
+                    case 3:
+                        requestJson += ",\"objectType\":\"" + objCells.item(j).innerHTML + "\"";
+                        break;
+                    case 4:
+                        requestJson += ",\"complexity\":\"" + objCells.item(j).innerHTML + "\"";
+                        break;
+                    case 5:
+                        requestJson += ",\"category\":\"" + objCells.item(j).innerHTML + "\"";
+                        break;
+                    case 6:
+                        if (objCells.item(j).innerHTML == "Yes") {
+                            requestJson += ",\"devConfig\":true";
+                        } else {
+                            requestJson += ",\"devConfig\":false";
+                        }
+                        break;
+                    case 7:
+                        if (objCells.item(j).innerHTML == "Manual") {
+                            requestJson += ",\"automation\":false";
+                        } else {
+                            requestJson += ",\"automation\":true";
+                        }
+                        break;
+                    case 8:
+                        if (objCells.item(j).innerHTML == "Yes") {
+                            requestJson += ",\"qa\":true";
+                        } else {
+                            requestJson += ",\"qa\":false";
+                        }
+                        break;
+                    case 9:
+                        if (objCells.item(j).innerHTML == "Yes") {
+                            requestJson += ",\"rt\":true";
+                        } else {
+                            requestJson += ",\"rt\":false";
+                        }
+                        break;
+                    case 10:
+                        requestJson += ",\"regressionQualification\":\"" + objCells.item(j).innerHTML + "\"}";
+                        break;
+                }
+            }
+        }
+        requestJson += "]}]}}";
+        // document.getElementById("tmpTxtArea").innerHTML=requestJson;
+        fetch('http://localhost:8080/estimation', {
+            method: 'POST',
+            headers: {
+                'Accept': '*/*',
+                'Content-Type': 'application/json'
+            },
+            body: requestJson
+        })
+            .then(response => {
+                createQuoteStatus = response.status;
+                return response.json();
+            }).then(data2 => {
+            if (createQuoteStatus == "201") {
+                var respCell = myTable.rows.item(0).cells;
+                alert("Quote Number: " + data2.estimationResponse.quoteID + " created");
+                respCell.item(0).innerHTML = "<a href=\"http://localhost:8080/ABAPGetQuote.html?quoteID=" + data2.estimationResponse.quoteID + "\">Quote #: " + data2.estimationResponse.quoteID + "</a>";
+            }
+        });
+    } else {
+        alert("Please add Line Items");
+    }
+
+}
+
+
+
+function reqQuote1() {
+    var myTable = document.getElementById("lineItems");
+    var requestJson = "{\"estimationRequest\":{\"quoteStatus\":\"Created\",\"totalEffort\": 0,\"createdBy\": \"Portal\",\"changedBy\": \"Portal\",\"approvedBy\": \"\",\"technology\": [{";
+    requestJson += "\"technologyName\": \"ABAP\",\"effort\": 0.0,\"abapDetails\": [";
+    if (myTable.rows.length > 1) {
+        for (i = 1; i < myTable.rows.length; i++) {
+            var objCells = myTable.rows.item(i).cells;
+            var k = document.getElementById("clientID").selectedIndex;
+
+            for (var j = 1; j < objCells.length; j++) {
+                switch (j) {
+                    case 1:
+                        if (i > 1) {
+                            requestJson += ",";
+                        }
+                        requestJson += "{\"clientID\":" + objCells.item(j).innerHTML;
+                        break;
+                    case 2:
+                        requestJson += ",\"requestType\":\"" + objCells.item(j).innerHTML + "\"";
+                        requestJson += ",\"releaseType\":\"" + clientData[k].itReleasesPerYear + "\"";
+                        break;
+                    case 3:
+                        requestJson += ",\"objectType\":\"" + objCells.item(j).innerHTML + "\"";
+                        break;
+                    case 4:
+                        requestJson += ",\"complexity\":\"" + objCells.item(j).innerHTML + "\"";
+                        break;
+                    case 5:
+                        requestJson += ",\"category\":\"" + objCells.item(j).innerHTML + "\"";
+                        break;
+                    case 6:
+                        if (objCells.item(j).innerHTML == "Yes") {
+                            requestJson += ",\"devConfig\":true";
+                        } else {
+                            requestJson += ",\"devConfig\":false";
+                        }
+                        break;
+                    case 7:
+                        if (objCells.item(j).innerHTML == "Manual") {
+                            requestJson += ",\"automation\":false";
+                        } else {
+                            requestJson += ",\"automation\":true";
+                        }
+                        break;
+                    case 8:
+                        if (objCells.item(j).innerHTML == "Yes") {
+                            requestJson += ",\"qa\":true";
+                        } else {
+                            requestJson += ",\"qa\":false";
+                        }
+                        break;
+                    case 9:
+                        if (objCells.item(j).innerHTML == "Yes") {
+                            requestJson += ",\"rt\":true";
+                        } else {
+                            requestJson += ",\"rt\":false";
+                        }
+                        break;
+                    case 10:
+                        requestJson += ",\"regressionQualification\":\"" + objCells.item(j).innerHTML + "\"}";
+                        break;
+                }
+            }
+        }
+        requestJson += "]}]}}";
+        // document.getElementById("tmpTxtArea").innerHTML=requestJson;
+        fetch('http://localhost:8080/estimation', {
+            method: 'POST',
+            headers: {
+                'Accept': '*/*',
+                'Content-Type': 'application/json'
+            },
+            body: requestJson
+        })
+            .then(response => {
+                createQuoteStatus = response.status;
+                return response.json();
+            }).then(data2 => {
+            if (createQuoteStatus == "201") {
+                var respCell = myTable.rows.item(0).cells;
+                alert("Quote Number: " + data2.estimationResponse.quoteID + " created");
+                respCell.item(0).innerHTML = "<a href=\"http://localhost:8080/ABAPGetQuote.html?quoteID=" + data2.estimationResponse.quoteID + "\">Quote #: " + data2.estimationResponse.quoteID + "</a>";
+            }
+        });
+    } else {
+        alert("Please add Line Items");
+    }
+
+}
+
+
+function removeItem(id) {
+    var myTable = document.getElementById("crLineItems");
+    myTable.removeChild(document.getElementById(id));
+}
+
+// function addToCart() {
+//     var viewCartButton = document.getElementById("viewCart");
+//     viewCartButton.style.display = "block";
+
+//     var table = document.getElementById("crLineItems");
+//     var row = document.createElement("tr");
+//     row.id = "tr" + rowCount;
+//     rowCount++;
+
+//     var td0 = row.appendChild(document.createElement('td'));
+//     var td1 = row.appendChild(document.createElement('td'));
+//     var td2 = row.appendChild(document.createElement('td'));
+//     var td3 = row.appendChild(document.createElement('td'));
+//     var td4 = row.appendChild(document.createElement('td'));
+//     var td5 = row.appendChild(document.createElement('td'));
+//     var td6 = row.appendChild(document.createElement('td'));
+//     var td7 = row.appendChild(document.createElement('td'));
+//     var td8 = row.appendChild(document.createElement('td'));
+//     var td9 = row.appendChild(document.createElement('td'));
+//     var td10 = row.appendChild(document.createElement('td'));
+
+//     td0.innerHTML = '<a href=\"#cart\" id=\"cart\" onclick=removeItem(\"' + row.id + '\")><em class=\"fa fa-trash fa-lg\" style=\"color:black\"aria-hidden=\"true\"></em></a>';
+//     var i = document.getElementById("clientID").selectedIndex;
+//     td1.innerHTML = clientData[i].clientID;
+
+//     var tmp = document.getElementById("requestType");
+//     td2.innerHTML = tmp[tmp.selectedIndex].innerHTML;
+//     tmp = document.getElementById("objectType");
+//     td3.innerHTML = tmp[tmp.selectedIndex].innerHTML;
+//     tmp = document.getElementById("objectComplexity");
+//     td4.innerHTML = tmp[tmp.selectedIndex].innerHTML;
+//     tmp = document.getElementById("objectDevCategory");
+//     td5.innerHTML = tmp[tmp.selectedIndex].innerHTML;
+//     tmp = document.getElementById("objectDevConfig");
+//     td6.innerHTML = tmp[tmp.selectedIndex].innerHTML;
+//     tmp = document.getElementById("objectTestType");
+//     td7.innerHTML = tmp[tmp.selectedIndex].innerHTML;
+//     tmp = document.getElementById("objectQa");
+//     td8.innerHTML = tmp[tmp.selectedIndex].innerHTML;
+//     tmp = document.getElementById("objectRt");
+//     td9.innerHTML = tmp[tmp.selectedIndex].innerHTML;
+//     tmp = document.getElementById("objectRtQual");
+//     td10.innerHTML = tmp[tmp.selectedIndex].innerHTML;
+
+
+//     table.appendChild(row);
+// }
+
+function loadClientInfo() {
+    var i = document.getElementById("clientID").selectedIndex;
+    document.getElementById("clientName").value = clientData[i].clientName;
+    document.getElementById("projectName").value = clientData[i].projectName
+
+}
+
+function loadInfo() {
+    var clientQualList = document.getElementById("clientID");
+    fetch('http://localhost:8080/estimation/abap/allClientQualifications')
+        .then(response => {
+            return response.json();
+        }).then(data => {
+
+        for (var i in data.abapClientQualification) {
+            var clientInfo = document.createElement('option');
+            clientInfo.innerHTML = data.abapClientQualification[i].clientID + '-' + data.abapClientQualification[i].clientName;
+            if (i == 0) {
+                clientInfo.selected = "selected";
+                document.getElementById("clientName").value = data.abapClientQualification[i].clientName;
+                document.getElementById("projectName").value = data.abapClientQualification[i].projectName
+            }
+            clientData.push(data.abapClientQualification[i]);
+            document.getElementById("clientID").appendChild(clientInfo);
+        }
+    });
+}
+
+
+
+// function toggleShoppingCart() {
+//     var shoppingCart = document.getElementById("shoppingcartid");
+//     var fieldset = document.getElementById("box1");
+
+//     if (shoppingCart.style.display === "none") {
+//         shoppingCart.style.display = "block";
+//         fieldset.style.display = "block"; // Add this line to hide the fieldset
+//     } else {
+//         shoppingCart.style.display = "none";
+//         fieldset.style.height = "auto";
+//         fieldset.style.overflow = "visible"; // Add this line to show the fieldset
+//     }
+// }
+
+// function toggleShoppingCart() {
+//     var shoppingCart = document.getElementById("shoppingcartid");
+
+//     // Toggle the display property of the shopping cart
+//     shoppingCart.style.display = shoppingCart.style.display === "none" ? "block" : "none";
+
+//     // Get the Request Quote button element
+//     var reqQuoteButton = document.getElementById("reqQuote");
+
+//     // Check if the shopping cart is visible
+//     if (shoppingCart.style.display === "block") {
+//         // If the shopping cart is visible, hide the Request Quote button
+//         reqQuoteButton.style.display = "block";
+//     } else {
+//         // If the shopping cart is hidden, show the Request Quote button
+//         reqQuoteButton.style.display = "none";
+//     }
+// }
+
+// function toggleShoppingCart() {
+//     var shoppingCart = document.getElementById("shoppingcartid");
+//     var viewCartButton = document.getElementById("viewCart");
+//     var requestType = document.getElementById("requestType").value;
+//     var crTable = document.getElementById("crLineItems");
+//     var incTable = document.getElementById("incLineItems");
+
+//     // Toggle the display property of the shopping cart
+//     if (shoppingCart.style.display === "none" || shoppingCart.style.display === "") {
+//         shoppingCart.style.display = "block";
+//         viewCartButton.innerHTML = "Close Cart"; // Change the button text to "Close Cart"
+        
+//         // Show/hide tables based on the selected request type
+//         if (requestType === "CR") {
+//             crTable.style.display = "block";
+//             incTable.style.display = "none";
+//         } else if (requestType === "Incident") {
+//             crTable.style.display = "none";
+//             incTable.style.display = "block";
+//         }else{
+        
+//                alert("Select Request Type")
+//                shoppingCart.style.display = "none";
+//                viewCartButton.innerHTML = "View Cart"
+           
+//         }
+//     } else {
+//         shoppingCart.style.display = "none";
+//         viewCartButton.innerHTML = "View Cart"; // Change the button text to "View Cart"
+        
+//         // Hide both tables when closing the cart
+//         crTable.style.display = "none";
+//         incTable.style.display = "none";
+//     }
+// }
+
+// function addToCart() {
+//     var viewCartButton = document.getElementById("viewCart");
+//     var viewCartButton1 = document.getElementById("viewCart1");
+
+//     viewCartButton.style.display = "block";
+//     viewCartButton1.style.display = "block";
+
+//     var table;
+//     var requestType = document.getElementById("requestType").value;
+
+//     if (requestType === "CR") {
+//         table = document.getElementById("crLineItems");
+//         var row = table.insertRow(-1); // Append row to the end of the table
+    
+//     var clientID = document.getElementById("clientID").value;
+//     var requestTypeValue = document.getElementById("requestType").value;
+//     var objectType = document.getElementById("objectType").value;
+//     var objectComplexity = document.getElementById("objectComplexity").value;
+//     var objectDevCategory = document.getElementById("objectDevCategory").value;
+//     var objectDevConfig = document.getElementById("objectDevConfig").value;
+//     var objectTestType = document.getElementById("objectTestType").value;
+//     var objectQa = document.getElementById("objectQa").value;
+//     var objectRt = document.getElementById("objectRt").value;
+//     var objectRtQual = document.getElementById("objectRtQual").value;
+
+//     // Assuming the first column is for serial number
+//     var serialNumber = table.rows.length - 2 ;
+
+//     var td1 = row.insertCell(0);
+//     var td2 = row.insertCell(1);
+//     var td3 = row.insertCell(2);
+//     var td4 = row.insertCell(3);
+//     var td5 = row.insertCell(4);
+//     var td6 = row.insertCell(5);
+//     var td7 = row.insertCell(6);
+//     var td8 = row.insertCell(7);
+//     var td9 = row.insertCell(8);
+//     var td10 = row.insertCell(9);
+//     var td11 = row.insertCell(10);
+
+//     td1.innerHTML = serialNumber;
+//     td2.innerHTML = clientID;
+//     td3.innerHTML = requestTypeValue;
+//     td4.innerHTML = objectType;
+//     td5.innerHTML = objectComplexity;
+//     td6.innerHTML = objectDevCategory;
+//     td7.innerHTML = objectDevConfig;
+//     td8.innerHTML = objectTestType;
+//     td9.innerHTML = objectQa;
+//     td10.innerHTML = objectRt;
+//     td11.innerHTML = objectRtQual;
+    
+//     table.style.display = "table"; // Ensure that the table is set to "table" display
+//     } else if (requestType === "Incident") {
+//         table = document.getElementById("incLineItems");
+        
+//     } else {
+//         alert("Select Request Type");
+//         return; // Do not proceed if the request type is not selected
+//     }
+//     document.getElementById("objectType").value = "Select";
+//     document.getElementById("objectComplexity").value = "Select";
+//     document.getElementById("objectDevCategory").value = "Select";
+//     document.getElementById("objectDevConfig").value = "Select";
+//     document.getElementById("objectTestType").value = "Select";
+//     document.getElementById("objectQa").value = "Select";
+//     document.getElementById("objectRt").value = "Select";
+//     document.getElementById("objectRtQual").value = "Select";
+
+
+    
+// }
+function addToCart() {
+    var viewCartButton = document.getElementById("viewCart");
+   
+    var table;
+    var requestType = document.getElementById("requestType").value;
+
+    if (requestType === "CR") {
+    viewCartButton.style.display = "block";
+
+        table = document.getElementById("crLineItems");
+        var row = table.insertRow(-1); // Append row to the end of the table
+    
+    var clientID = document.getElementById("clientID").value;
+    var requestTypeValue = document.getElementById("requestType").value;
+    var objectType = document.getElementById("objectType").value;
+    var objectComplexity = document.getElementById("objectComplexity").value;
+    var objectDevCategory = document.getElementById("objectDevCategory").value;
+    var objectDevConfig = document.getElementById("objectDevConfig").value;
+    var objectTestType = document.getElementById("objectTestType").value;
+    var objectQa = document.getElementById("objectQa").value;
+    var objectRt = document.getElementById("objectRt").value;
+    var objectRtQual = document.getElementById("objectRtQual").value;
+
+    // Assuming the first column is for serial number
+    var serialNumber = table.rows.length - 2 ;
+
+    var td1 = row.insertCell(0);
+    var td2 = row.insertCell(1);
+    var td3 = row.insertCell(2);
+    var td4 = row.insertCell(3);
+    var td5 = row.insertCell(4);
+    var td6 = row.insertCell(5);
+    var td7 = row.insertCell(6);
+    var td8 = row.insertCell(7);
+    var td9 = row.insertCell(8);
+    var td10 = row.insertCell(9);
+    var td11 = row.insertCell(10);
+
+    td1.innerHTML = serialNumber;
+    td2.innerHTML = clientID;
+    td3.innerHTML = requestTypeValue;
+    td4.innerHTML = objectType;
+    td5.innerHTML = objectComplexity;
+    td6.innerHTML = objectDevCategory;
+    td7.innerHTML = objectDevConfig;
+    td8.innerHTML = objectTestType;
+    td9.innerHTML = objectQa;
+    td10.innerHTML = objectRt;
+    td11.innerHTML = objectRtQual;
+    console.log(requestTypeValue);
+    
+    table.style.display = "table"; // Ensure that the table is set to "table" display
+    }  else {
+        alert("Select Request Type");
+        return; // Do not proceed if the request type is not selected
+    }
+    document.getElementById("objectType").value = "Select";
+    document.getElementById("objectComplexity").value = "Select";
+    document.getElementById("objectDevCategory").value = "Select";
+    document.getElementById("objectDevConfig").value = "Select";
+    document.getElementById("objectTestType").value = "Select";
+    document.getElementById("objectQa").value = "Select";
+    document.getElementById("objectRt").value = "Select";
+    document.getElementById("objectRtQual").value = "Select";
+
+
+    
+}
+
+
+function addToCart1() {
+    var viewCartButton1 = document.getElementById("viewCart1");
+    var table;
+    var requestType = document.getElementById("requestType").value;
+
+    if (requestType === "Incident") {
+        viewCartButton1.style.display = "block";
+        table = document.getElementById("incLineItems");
+        var row = table.insertRow(-1); // Append row to the end of the table
+
+        // Assuming the first column is for serial number
+        var serialNumber = table.rows.length - 2;
+
+        var clientID = document.getElementById("clientID").value;
+        var requestTypeValue = document.getElementById("requestType").value;
+        var defectCategory = document.getElementById("defectCategory").value;
+        var devRequired = document.getElementById("devRequired").value;
+        var Priorty = document.getElementById("Priorty").value;
+        var objectTestType1 = document.getElementById("objectTestType1").value;
+        var objectQa1 = document.getElementById("objectQa1").value;
+        var objectRt1 = document.getElementById("objectRt1").value;
+        var objectRtQual1 = document.getElementById("objectRtQual1").value;
+
+        var td1 = row.insertCell(0);
+        var td2 = row.insertCell(1);
+        var td3 = row.insertCell(2);
+        var td4 = row.insertCell(3);
+        var td5 = row.insertCell(4);
+        var td6 = row.insertCell(5);
+        var td7 = row.insertCell(6);
+        var td8 = row.insertCell(7);
+        var td9 = row.insertCell(8);
+        var td10 = row.insertCell(9);
+
+        td1.innerHTML = serialNumber;
+        td2.innerHTML = clientID;
+        td3.innerHTML = requestTypeValue;
+        td4.innerHTML = defectCategory;
+        td5.innerHTML = devRequired;
+        td6.innerHTML = Priorty;
+        td7.innerHTML = objectTestType1;
+        td8.innerHTML = objectQa1;
+        td9.innerHTML = objectRt1;
+        td10.innerHTML = objectRtQual1;
+        console.log(defectCategory);
+        table.style.display = "table"; // Ensure that the table is set to "table" display
+    } else {
+        alert("Select Request Type");
+        return; // Do not proceed if the request type is not selected
+    }
+
+    document.getElementById("defectCategory").value = "Select";
+    document.getElementById("devRequired").value = "Select";
+    document.getElementById("Priorty").value = "Select";
+    document.getElementById("objectTestType1").value = "Select";
+    document.getElementById("objectQa1").value = "Select";
+    document.getElementById("objectRt1").value = "Select";
+    document.getElementById("objectRtQual1").value = "Select";
+
+
+    
+}
+
+
+
+function toggleShoppingCart() {
+    var shoppingCart = document.getElementById("shoppingcartid");
+    var viewCartButton = document.getElementById("viewCart");
+    var requestQuoteButton1 = document.getElementById("reqQuote1");
+    var requestQuoteButton = document.getElementById("reqQuote");
+    var requestType = document.getElementById("requestType").value;
+    var crTable = document.getElementById("crLineItems");
+    var incTable = document.getElementById("incLineItems");
+
+    if (shoppingCart.style.display === "none" || shoppingCart.style.display === "") {
+        shoppingCart.style.display = "block";
+        viewCartButton.innerHTML = "Close Cart";
+    
+        if (requestType === "CR") {
+            crTable.style.display = "block";
+            incTable.style.display = "none";
+            requestQuoteButton1.style.display = "none";
+            requestQuoteButton.style.display = "block";
+        } else if (requestType === "Incident") {
+            crTable.style.display = "none";
+            incTable.style.display = "block";
+            requestQuoteButton1.style.display = "none";
+            requestQuoteButton.style.display = "block"; // Show the Request Quote button
+        } else {
+            alert("Select Request Type");
+            shoppingCart.style.display = "none";
+            viewCartButton.innerHTML = "View Cart";
+            requestQuoteButton1.style.display = "none";
+            requestQuoteButton.style.display = "none"; // Hide the Request Quote button
+        }
+    } else {
+        shoppingCart.style.display = "none";
+        requestQuoteButton1.style.display = "none";
+        viewCartButton.innerHTML = "View Cart";
+        
+        crTable.style.display = "none";
+        incTable.style.display = "none";
+        requestQuoteButton.style.display = "none"; // Hide the Request Quote button
+    }
+}
+
+function toggleShoppingCart1() {
+    
+    var shoppingCart1 = document.getElementById("shoppingcartid1");
+    var viewCartButton1 = document.getElementById("viewCart1");
+    var requestQuoteButton1 = document.getElementById("reqQuote1");
+    var requestQuoteButton = document.getElementById("reqQuote");
+    var requestType = document.getElementById("requestType").value;
+    var crTable = document.getElementById("crLineItems");
+    var incTable = document.getElementById("incLineItems");
+
+    if(shoppingCart1.style.display === "none" || shoppingCart1.style.display === "") {
+        shoppingCart1.style.display = "block";
+        viewCartButton1.innerHTML = "Close Cart";
+       
+
+        if (requestType === "CR") {
+            crTable.style.display = "block";
+            incTable.style.display = "none";
+            requestQuoteButton1.style.display = "block";
+            requestQuoteButton.style.display = "none";
+        } else if (requestType === "Incident") {
+            crTable.style.display = "none";
+            incTable.style.display = "block";
+            requestQuoteButton.style.display = "none";
+            requestQuoteButton1.style.display = "block"; // Show the Request Quote button
+        } else {
+            alert("Select Request Type");
+            shoppingCart1.style.display = "none";
+            viewCartButton1.innerHTML = "View Cart";
+            requestQuoteButton.style.display = "none";
+            requestQuoteButton1.style.display = "none"; // Hide the Request Quote button
+        }
+    } else {
+       
+        shoppingCart1.style.display = "none";
+        viewCartButton1.innerHTML = "View Cart";
+        crTable.style.display = "none";
+        incTable.style.display = "none";
+        requestQuoteButton.style.display = "none";
+        requestQuoteButton1.style.display = "none"; // Hide the Request Quote button
+    }
+}
+
+
+// function loadCRINCInfo() {
+    
+//     var i = document.getElementById("requestType").selectedIndex;
+//     var objectTypeDropdown = document.getElementById("objectType");
+//     objectTypeDropdown.innerHTML = "<option value='' disabled selected>Select</option>"; // Reset dropdown
+
+//     if (i === 1) { // Incident
+//         for (var x in abapINCObjectType) {
+//             var tmpObjectType = document.createElement('option');
+//             tmpObjectType.innerHTML = abapINCObjectType[x];
+//             objectTypeDropdown.appendChild(tmpObjectType);
+//         }
+
+//         document.getElementById("labelPrio").innerHTML = " Priority";
+//         let objectDevCategory = document.getElementById("objectDevCategory");
+//         objectDevCategory.style.visibility = 'hidden';
+
+//         let labelDevType = document.getElementById("labelDevType");
+//         labelDevType.style.visibility = 'hidden';
+
+//     } else if (i === 2) { // CR
+//         for (var x in abapCRObjectType) {
+//             var tmpObjectType = document.createElement('option');
+//             tmpObjectType.innerHTML = abapCRObjectType[x];
+//             objectTypeDropdown.appendChild(tmpObjectType);
+//         }
+
+//         document.getElementById("labelPrio").innerHTML = " Complexity";
+//         let objectDevCategory = document.getElementById("objectDevCategory");
+//         objectDevCategory.style.visibility = 'visible';
+
+//         let labelDevType = document.getElementById("labelDevType");
+//         labelDevType.style.visibility = 'visible';
+//         var requestType = document.getElementById("requestType").value;
+
+//             // Get references to the dropdown fields you want to show/hide
+//             var defectCategory = document.getElementById("defectCategory");
+//             var devRequired = document.getElementById("devRequired");
+//             var priority = document.getElementById("priority");
+//             var testingType = document.getElementById("testingType");
+//             var qaTestRequired = document.getElementById("qaTestRequired");
+//             var regressionTestRequired = document.getElementById("regressionTestRequired");
+//             var regressionTCQualification = document.getElementById("regressionTCQualification");
+
+//             // Reset all dropdown fields to default state
+//             defectCategory.style.display = "none";
+//             devRequired.style.display = "none";
+//             priority.style.display = "none";
+//             testingType.style.display = "none";
+//             qaTestRequired.style.display = "none";
+//             regressionTestRequired.style.display = "none";
+//             regressionTCQualification.style.display = "none";
+
+//             // Show dropdown fields based on the selected request type
+//             if (requestType === "Incident") {
+//                 defectCategory.style.display = "block";
+//                 devRequired.style.display = "block";
+//                 priority.style.display = "block";
+//                 testingType.style.display = "block";
+//                 qaTestRequired.style.display = "block";
+//                 regressionTestRequired.style.display = "block";
+//                 regressionTCQualification.style.display = "block";
+//             }
+//     }
+// }
+
+
+function loadCRINCInfo() {
+    var requestType = document.getElementById("requestType").value;
+    var incidentFields = document.getElementById("incidentFields");
+    var crFields = document.getElementById("crtQuote");
+
+    // Reset incident fields to default state
+    incidentFields.style.display = "none";
+    crFields.style.display = "none";
+
+
+    // Show incident fields if the request type is Incident
+    if (requestType === "Incident") {
+        incidentFields.style.display = "block";
+    } else if(requestType === "CR") {
+        crFields.style.display = "block";
+    } else{
+        alert("No values selected");
+    }
+}
+
+function loadInfo() {
+    var clientQualList = document.getElementById("clientID");
+    fetch('http://localhost:8080/estimation/abap/allClientQualifications')
+        .then(response => {
+            return response.json();
+        }).then(data => {
+
+        for (var i in data.abapClientQualification) {
+            var clientInfo = document.createElement('option');
+            clientInfo.innerHTML = data.abapClientQualification[i].clientID + '-' + data.abapClientQualification[i].clientName;
+            if (i == 0) {
+                clientInfo.selected = "selected";
+                document.getElementById("clientName").value = data.abapClientQualification[i].clientName;
+                document.getElementById("projectName").value = data.abapClientQualification[i].projectName
+            }
+            clientData.push(data.abapClientQualification[i]);
+            document.getElementById("clientID").appendChild(clientInfo);
+        }
+        for (var j in abapCRObjectType) {
+            var tmpObjtype = document.createElement('option');
+            tmpObjtype.innerHTML = abapCRObjectType[j];
+            document.getElementById("objectType").appendChild(tmpObjtype);
+        }
+        for (k in abapCRComplexity) {
+            var tmpComplexity = document.createElement('option');
+            tmpComplexity.innerHTML = abapCRComplexity[k];
+            document.getElementById("objectPrio").appendChild(tmpComplexity);
+        }
+    });
+}
